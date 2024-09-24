@@ -28,13 +28,15 @@ pipeline{
             }
         }
         stage('Stage 4: Push docker image to hub') {
-            steps{
-                script{
-                    sh '/usr/local/bin/docker login -u "neogenkai" -p ' + dpass
-                    sh '/usr/local/bin/docker push '+registry+':latest'
-                }
+    steps {
+        script {
+            withCredentials([string(credentialsId: 'docker-hub-credentials-id', variable: 'dpass')]) {
+                sh '/usr/local/bin/docker login -u "neogenkai" -p ' + dpass
+                sh '/usr/local/bin/docker push ' + registry + ':latest'
             }
         }
+    }
+}
         stage('Stage 5: Clean docker images'){
             steps{
                 script{
