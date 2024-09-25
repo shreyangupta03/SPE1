@@ -47,7 +47,7 @@ pipeline {
         }
         stage('Step 6: Ansible Deployment') {
             steps {
-                sh "${ANSIBLE_PATH} -i Deployment/inventory Deployment/deploy.yml"
+                sh "ansible-playbook -i Deployment/inventory Deployment/deploy.yml"
             }
         }
     }
