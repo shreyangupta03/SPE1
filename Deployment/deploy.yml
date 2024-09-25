@@ -16,5 +16,12 @@
         name: shreyangupta03/calculator:latest
         source: pull
 
+    - name: Stop and remove existing container if it exists
+      shell: |
+        if [ $(docker ps -a -q -f name=Calculator) ]; then
+          docker stop Calculator
+          docker rm Calculator
+        fi
+
     - name: Running container
       shell: /usr/local/bin/docker run -it -d --name Calculator shreyangupta03/calculator
