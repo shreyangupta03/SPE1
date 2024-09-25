@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   vars:
-    ansible_python_interpreter: /usr/bin/python3
+    ansible_python_interpreter: /Users/shreyangupta/myenv/bin/python
   tasks:
     - name: Pull image
       docker_image:
