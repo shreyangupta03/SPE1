@@ -1,53 +1,53 @@
-pipeline{
-    agent any
+pipeline {
+    environment {
+        DOCKERHUB_CRED = credentials("DockerHubCred")
+        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+        DOCKER_PATH = "/usr/local/bin/docker" // Explicit Docker path
+        ANSIBLE_PATH = "/Users/shreyangupta/myenv/bin/python"
+    }
     tools {
-        maven 'mvn'
+        maven 'maven'
     }
-    environment{
-        docker_image = ""
-        registry="neogenkai/calculator"
-        dpass=""
-    }
-    stages{
-        stage('Stage 1: Git Clone'){
-            steps{
-                git branch: 'main',
-                url:'https://github.com/Shreyansh-Rai/Calc_SPE_MiniProj'
+    agent any
+    stages {
+        stage('Stage 1: Git Clone') {
+            steps {
+                git branch: 'main', url: 'https://github.com/shreyangupta03/SPE1.git'
             }
         }
-        stage('Step 2: Maven Build'){
-            steps{
+        stage('Step 2: Maven Build') {
+            steps {
                 sh 'mvn clean install'
             }
         }
-        stage('Stage 3: Build Docker Image'){
-            steps{
-                script{
-                    docker_image = sh '/usr/local/bin/docker build -t' + registry + ':latest .'
+        stage('Stage 3: Build Docker Image') {
+            steps {
+                script {
+                    docker_image = sh "${DOCKER_PATH} build -t shreyangupta03/calculator:latest ."
                 }
             }
         }
-        stage('Stage 4: Push docker image to hub') {
-    steps {
-        script {
-            withCredentials([string(credentialsId: 'docker-hub-credentials-id', variable: 'dpass')]) {
-                sh '/usr/local/bin/docker login -u "neogenkai" -p ' + dpass
-                sh '/usr/local/bin/docker push ' + registry + ':latest'
-            }
-        }
-    }
-}
-        stage('Stage 5: Clean docker images'){
-            steps{
-                script{
-                    sh '/usr/local/bin/docker container prune -f'
-                    sh '/usr/local/bin/docker image prune -f'
+        stage('Stage 4: Push Docker Image to Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'DockerHubCred', usernameVariable: 'shreyangupta03', passwordVariable: 'Shreyanak1234')]) {
+                        sh "${DOCKER_PATH} login -u ${shreyangupta03} -p ${Shreyanak1234}"
+                        sh "${DOCKER_PATH} push shreyangupta03/calculator:latest"
+                    }
                 }
             }
         }
-        stage('Step 6: Ansible Deployment'){
-            steps{
-                sh '/Users/shreyanshrai/Library/Python/3.12/bin/ansible-playbook Deployment/deploy.yml -i Deployment/inventory -e image_name=$registry'
+        stage('Stage 5: Clean Docker Images') {
+            steps {
+                script {
+                    sh "${DOCKER_PATH} container prune -f"
+                    sh "${DOCKER_PATH} image prune -f"
+                }
+            }
+        }
+        stage('Step 6: Ansible Deployment') {
+            steps {
+                sh "${ANSIBLE_PATH} -i Deployment/inventory Deployment/deploy.yml"
             }
         }
     }
