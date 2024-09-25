@@ -3,15 +3,18 @@
   hosts: localhost
   connection: local
   vars:
-    ansible_python_interpreter: /usr/bin/python3
+    ansible_python_interpreter: /usr/local/bin/python3
   tasks:
+    - name: Ensure Docker is running
+      shell: |
+        if ! pgrep -x "Docker"; then
+          open --background -a Docker && echo "Waiting for Docker to start..." && while ! docker system info > /dev/null 2>&1; do sleep 1; done;
+        fi
+
     - name: Pull image
       docker_image:
         name: shreyangupta03/calculator:latest
         source: pull
-    - name: Start docker service
-      service:
-        name: docker
-        state: started
+
     - name: Running container
       shell: /usr/local/bin/docker run -it -d --name Calculator shreyangupta03/calculator
