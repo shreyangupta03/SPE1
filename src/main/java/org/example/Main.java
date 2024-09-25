@@ -19,6 +19,8 @@ import javax.swing.JTextField;
 
 
 
+// kzgbksjdfgb
+
 class MyCalculator extends JFrame{
     private static final Logger logger2 = LogManager.getLogger(MyCalculator.class);
     private boolean start = true;
