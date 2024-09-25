@@ -15,6 +15,7 @@ public class CalcTest {
     {
         double a = 1;
         double b = 2;
+//        int x = 2;
         double expected = 3;
         Assert.assertEquals(expected,calc.add(a,b),1e-6);
     }
